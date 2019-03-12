@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Autofac" Version="4.9.1" />
+      <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+      <PackageReference Include="RawRabbit" Version="1.10.4" />
+      <PackageReference Include="RawRabbit.DependencyInjection.Autofac" Version="1.10.4" />
+      <PackageReference Include="RawRabbit.vNext" Version="1.10.4" />
+    </ItemGroup>
+
+</Project>
