@@ -12,7 +12,7 @@ namespace BorrowIt.Common.Domain.Repositories
         Task UpdateAsync(TDomainModel aggregate);
         Task RemoveAsync(TDomainModel aggregate);
         Task<IEnumerable<TDomainModel>> GetAllAsync();
-        Task<TDomainModel> GetAsync(Expression<Func<TDomainModel, bool>> predicate);
+        Task<IEnumerable<TDomainModel>> GetWithExpressionAsync(Expression<Func<TEntity, bool>> predicate);
         Task<TDomainModel> GetAsync(Guid id);
     }
 }

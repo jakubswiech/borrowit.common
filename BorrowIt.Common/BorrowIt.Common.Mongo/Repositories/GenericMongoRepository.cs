@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using AutoMapper;
 using BorrowIt.Common.Domain;
 using BorrowIt.Common.Domain.Repositories;
-using BorrowIt.Common.Infrastructure.Entities;
 using BorrowIt.Common.Mongo.Attributes;
 using BorrowIt.Common.Mongo.Models;
 using MongoDB.Driver;
@@ -15,10 +15,12 @@ namespace BorrowIt.Common.Mongo.Repositories
     public class GenericMongoRepository<TDomainModel, TEntity> : IGenericRepository<TDomainModel, TEntity> 
         where TDomainModel : DomainModel where TEntity : IMongoEntity
     {
+        private readonly IMapper _mapper;
         private readonly IMongoCollection<TEntity> _collection;
 
-        public GenericMongoRepository(IMongoDatabase database)
+        public GenericMongoRepository(IMongoDatabase database, IMapper mapper)
         {
+            _mapper = mapper;
             var mongoEntityAttribute = typeof(TEntity).GetCustomAttributes(typeof(MongoEntityAttribute), false)
                 .SingleOrDefault() as MongoEntityAttribute;
 
@@ -30,19 +32,29 @@ namespace BorrowIt.Common.Mongo.Repositories
             _collection = database.GetCollection<TEntity>(mongoEntityAttribute.TableName);
         }
         
-        public Task CreateAsync(TDomainModel aggregate)
+        public async Task CreateAsync(TDomainModel aggregate)
         {
-            throw new NotImplementedException();
+            CheckAggregateNotNull(aggregate);
+            
+            var entity = _mapper.Map<TEntity>(aggregate);
+            await _collection.InsertOneAsync(entity);
         }
 
-        public Task UpdateAsync(TDomainModel aggregate)
+        public async Task UpdateAsync(TDomainModel aggregate)
         {
-            throw new NotImplementedException();
+            CheckAggregateNotNull(aggregate);
+            
+            var entity = _mapper.Map<TEntity>(aggregate);
+
+            await _collection.UpdateOneAsync(x => x.Id == aggregate.Id,
+                new ObjectUpdateDefinition<TEntity>(entity));
+
+
         }
 
-        public Task RemoveAsync(TDomainModel aggregate)
+        public async Task RemoveAsync(TDomainModel aggregate)
         {
-            throw new NotImplementedException();
+            await _collection.DeleteOneAsync(x => x.Id == aggregate.Id);
         }
 
         public Task<IEnumerable<TDomainModel>> GetAllAsync()
@@ -50,14 +62,25 @@ namespace BorrowIt.Common.Mongo.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<TDomainModel> GetAsync(Expression<Func<TDomainModel, bool>> predicate)
+        public async Task<IEnumerable<TDomainModel>> GetWithExpressionAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            throw new NotImplementedException();
+            var entities = await _collection.Find(predicate).ToListAsync();
+            return _mapper.Map<IEnumerable<TDomainModel>>(entities);
         }
 
-        public Task<TDomainModel> GetAsync(Guid id)
+        public async Task<TDomainModel> GetAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var entity = await _collection.Find(x => x.Id.Equals(id)).SingleOrDefaultAsync();
+            return _mapper.Map<TDomainModel>(entity);
+        }
+            
+        
+        private void CheckAggregateNotNull(TDomainModel aggregate)
+        {
+            if (aggregate == null)
+            {
+                throw new ArgumentNullException(nameof(aggregate));
+            }
         }
     }
 }
