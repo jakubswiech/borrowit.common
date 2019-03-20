@@ -5,7 +5,12 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
+using BorrowIt.Api.Domain;
+using BorrowIt.Api.Entities;
 using BorrowIt.Api.Messages;
+using BorrowIt.Common.Domain.Repositories;
+using BorrowIt.Common.Mongo.IoC;
 using BorrowIt.Common.Rabbit.Abstractions;
 using BorrowIt.Common.Rabbit.Implementations;
 using BorrowIt.Common.Rabbit.IoC;
@@ -38,6 +43,9 @@ namespace BorrowIt.Api
             
             var builder = new ContainerBuilder();
             builder.RegisterModule(new RawRabbitModule(Configuration));
+            builder.RegisterModule(new MongoDbModule(Configuration, "mongoDb"));
+            builder.Register(ctx => new MapperConfiguration(x => x.CreateMap<Test, TestEntity>()).CreateMapper())
+                .As<IMapper>().SingleInstance();
             builder.RegisterAssemblyTypes(Assembly.GetEntryAssembly())
                 .AsImplementedInterfaces();
             builder.Populate(services);
@@ -69,6 +77,13 @@ namespace BorrowIt.Api
             var publisher = app.ApplicationServices.GetService<IBusPublisher>();
 
             publisher.PublishAsync(new TestMessage() {Name = "test"});
+
+            var genericRepo = app.ApplicationServices.GetService<IGenericRepository<Test, TestEntity>>();
+
+            var test = genericRepo.GetWithExpressionAsync(x => x.Name == "test").GetAwaiter().GetResult().SingleOrDefault();
+            
+            Console.WriteLine(test.Name);
+
         }
     }
 }

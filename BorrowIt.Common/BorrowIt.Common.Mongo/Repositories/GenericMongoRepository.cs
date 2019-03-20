@@ -57,9 +57,10 @@ namespace BorrowIt.Common.Mongo.Repositories
             await _collection.DeleteOneAsync(x => x.Id == aggregate.Id);
         }
 
-        public Task<IEnumerable<TDomainModel>> GetAllAsync()
+        public async Task<IEnumerable<TDomainModel>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var entities = await _collection.AsQueryable().ToListAsync();
+            return _mapper.Map<IEnumerable<TDomainModel>>(entities);
         }
 
         public async Task<IEnumerable<TDomainModel>> GetWithExpressionAsync(Expression<Func<TEntity, bool>> predicate)
