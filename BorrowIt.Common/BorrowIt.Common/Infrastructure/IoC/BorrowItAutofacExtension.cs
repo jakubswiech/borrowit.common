@@ -34,11 +34,6 @@ namespace BorrowIt.Common.Infrastructure.IoC
 
         public static ContainerBuilder AddGenericRepository(this ContainerBuilder builder, Type genericRepositoryType)
         {
-            if (!genericRepositoryType.IsAssignableFrom(typeof(IGenericRepository<,>)))
-            {
-                throw new BusinessLogicException("Type is not assignable to IGenericRepository");
-            }
-
             builder.RegisterGeneric(genericRepositoryType).As(typeof(IGenericRepository<,>)).InstancePerLifetimeScope();
 
             return builder;
