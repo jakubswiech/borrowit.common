@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <PackageId>BorrowIt.Common.Mongo</PackageId>
-        <Version>1.0.4</Version>
+        <Version>1.0.7</Version>
         <Authors>Jakub Święch</Authors>
     </PropertyGroup>
 

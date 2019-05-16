@@ -46,8 +46,8 @@ namespace BorrowIt.Common.Mongo.Repositories
             
             var entity = _mapper.Map<TEntity>(aggregate);
 
-            await _collection.UpdateOneAsync(x => x.Id == aggregate.Id,
-                new ObjectUpdateDefinition<TEntity>(entity));
+            await _collection.ReplaceOneAsync(x => x.Id == aggregate.Id, entity, 
+                new UpdateOptions() {IsUpsert = true});
 
 
         }
