@@ -27,7 +27,11 @@ namespace BorrowIt.Common.Rabbit.Implementations
             _busClient.SubscribeAsync<TMessage>(async (msg, ctx) =>
             {
                 await messageHandler.HandleMessageAsync(msg, CancellationToken.None);
-            }, ctx => ctx.WithRoutingKey(PathHelper.GetPath<TMessage>()));
+            }, ctx =>
+            {
+                ctx.WithRoutingKey(PathHelper.GetPath<TMessage>());
+                ctx.WithExchange(x => { x.WithName(PathHelper.GetPath<TMessage>()); });
+            });
 
             return this;
         }

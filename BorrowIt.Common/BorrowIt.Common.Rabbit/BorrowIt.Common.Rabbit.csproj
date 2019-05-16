@@ -3,13 +3,14 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <PackageId>BorrowIt.Common.Rabbit</PackageId>
-        <Version>1.0.3</Version>
+        <Version>1.0.6</Version>
         <Authors>Jakub Święch</Authors>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="Autofac" Version="4.9.1" />
       <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
       <PackageReference Include="RawRabbit" Version="1.10.4" />
       <PackageReference Include="RawRabbit.DependencyInjection.Autofac" Version="1.10.4" />
       <PackageReference Include="RawRabbit.vNext" Version="1.10.4" />

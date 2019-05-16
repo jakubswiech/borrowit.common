@@ -6,6 +6,9 @@ using Microsoft.Extensions.Configuration;
 using RawRabbit;
 using RawRabbit.Configuration;
 using RawRabbit.DependencyInjection.Autofac;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using RawRabbit.Serialization;
 using RawRabbit.vNext;
 
 namespace BorrowIt.Common.Rabbit.IoC
@@ -21,10 +24,12 @@ namespace BorrowIt.Common.Rabbit.IoC
 
         protected override void Load(ContainerBuilder builder)
         {
-            var options = new RawRabbitConfiguration();
-            options.Hostnames = new List<string>();
-            _configuration.GetSection("rabbitmq").Bind(options);
-            var client = BusClientFactory.CreateDefault(options);
+            var client = BusClientFactory.CreateDefault(ctx =>
+                {
+                    ctx.AddJsonFile("rawrabbit.json");
+                },
+                ioc => ioc.AddSingleton<IMessageSerializer, RabbitSerializer>()
+                );
             builder.Register(ctx => client).As<IBusClient>().SingleInstance();
             builder.RegisterType<BusPublisher>().As<IBusPublisher>();
         }
