@@ -68,6 +68,12 @@ namespace BorrowIt.Common.Mongo.Repositories
             var entities = await _collection.Find(predicate).ToListAsync();
             return _mapper.Map<IEnumerable<TDomainModel>>(entities);
         }
+        
+        public async Task<IEnumerable<TDomainModel>> GetWithExpressionAsync(FilterDefinition<TEntity> filter)
+        {
+            var entities = await _collection.Find(filter).ToListAsync();
+            return _mapper.Map<IEnumerable<TDomainModel>>(entities);
+        }
 
         public async Task<TDomainModel> GetAsync(Guid id)
         {
