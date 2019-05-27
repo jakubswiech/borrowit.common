@@ -5,6 +5,7 @@
         <PackageId>BorrowIt.Common.Rabbit</PackageId>
         <Version>1.0.8</Version>
         <Authors>Jakub Święch</Authors>
+        <PackageVersion>1.0.9</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
