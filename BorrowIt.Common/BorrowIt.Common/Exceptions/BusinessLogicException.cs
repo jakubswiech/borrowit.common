@@ -9,12 +9,12 @@ namespace BorrowIt.Common.Exceptions
             
         }
 
-        public BusinessLogicException(string message)
+        public BusinessLogicException(string message) : base(message)
         {
             
         }
 
-        public BusinessLogicException(string message, Exception innerException)
+        public BusinessLogicException(string message, Exception innerException) : base(message, innerException)
         {
             
         }
