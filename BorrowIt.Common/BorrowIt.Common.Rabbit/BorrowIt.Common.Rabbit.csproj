@@ -3,9 +3,9 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <PackageId>BorrowIt.Common.Rabbit</PackageId>
-        <Version>1.0.8</Version>
+        <Version>1.1.1</Version>
         <Authors>Jakub Święch</Authors>
-        <PackageVersion>1.0.9</PackageVersion>
+        <PackageVersion>1.1.1</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>

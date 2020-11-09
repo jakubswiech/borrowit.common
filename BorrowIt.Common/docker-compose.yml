@@ -4,6 +4,7 @@ services:
 
   mongo:
     image: mongo
+    hostname: mongo
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -12,12 +13,19 @@ services:
       
   rabbit:
     image: rabbitmq:3-management
+    hostname: rabbitMq
     ports:
         - "15672:15672"
         - "5672:5672"
     labels:
         NAME: "rabbitmq"
     environment: 
-        RABBITMQ_DEFAULT_USER: "rabbitmq"
-        RABBITMQ_DEFAULT_PASS: "rabbitmq"
+        RABBITMQ_DEFAULT_USER: "rabbitMq"
+        RABBITMQ_DEFAULT_PASS: "rabbitMq"
         RABBITMQ_DEFAULT_VHOST: "/"
+        
+  auth:
+    image: auth
+    hostname: auth
+    ports:
+        - "8080:80"
