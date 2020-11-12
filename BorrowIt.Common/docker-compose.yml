@@ -9,6 +9,11 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: admin
+    ports:
+        - "27017:27017"
+    networks:
+        testing_net:
+            ipv4_address: 172.20.0.3
 
       
   rabbit:
@@ -23,9 +28,31 @@ services:
         RABBITMQ_DEFAULT_USER: "rabbitMq"
         RABBITMQ_DEFAULT_PASS: "rabbitMq"
         RABBITMQ_DEFAULT_VHOST: "/"
+    networks:
+        testing_net:
+            ipv4_address: 172.20.0.4
         
   auth:
     image: auth
     hostname: auth
     ports:
         - "8080:80"
+    networks:
+        testing_net:
+            ipv4_address: 172.20.0.5
+            
+  todo:
+    image: todo
+    hostname: todo
+    ports:
+        - "8081:80"
+    networks:
+        testing_net:
+            ipv4_address: 172.20.0.6          
+  
+networks:
+  testing_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16

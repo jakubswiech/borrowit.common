@@ -32,7 +32,7 @@ namespace BorrowIt.Common.Extensions
                 }
                 else
                 {
-                    message = "unknown_error";
+                    throw;
                 }
                 
                 Log.Error(ex.ToString());

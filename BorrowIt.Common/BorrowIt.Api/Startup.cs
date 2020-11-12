@@ -38,21 +38,19 @@ namespace BorrowIt.Api
         public IContainer Container { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            
-            var builder = new ContainerBuilder();
+            services.AddControllers();
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
             builder.RegisterModule(new RawRabbitModule(Configuration));
             builder.RegisterModule(new MongoDbModule(Configuration, "mongoDb"));
             builder.Register(ctx => new MapperConfiguration(x => x.CreateMap<Test, TestEntity>()).CreateMapper())
                 .As<IMapper>().SingleInstance();
             builder.RegisterAssemblyTypes(Assembly.GetEntryAssembly())
                 .AsImplementedInterfaces();
-            builder.Populate(services);
-            Container = builder.Build();
-
-            return new AutofacServiceProvider(Container);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,11 +74,13 @@ namespace BorrowIt.Api
             
             var publisher = app.ApplicationServices.GetService<IBusPublisher>();
 
-            publisher.PublishAsync(new TestMessage() {Name = "test"});
+            publisher.PublishAsync(new TestMessage() {Name = "test message"});
 
             var genericRepo = app.ApplicationServices.GetService<IGenericRepository<Test, TestEntity>>();
 
-            var test = genericRepo.GetWithExpressionAsync(x => x.Name == "test").GetAwaiter().GetResult().SingleOrDefault();
+            var id = Guid.NewGuid();
+            genericRepo.CreateAsync(new Test("test", id)).GetAwaiter().GetResult();
+            var test = genericRepo.GetWithExpressionAsync(x => x.Id == id).GetAwaiter().GetResult().SingleOrDefault();
             
             Console.WriteLine(test.Name);
 

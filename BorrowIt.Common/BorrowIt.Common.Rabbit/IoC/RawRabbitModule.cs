@@ -4,9 +4,13 @@ using Autofac;
 using BorrowIt.Common.Rabbit.Abstractions;
 using BorrowIt.Common.Rabbit.Implementations;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using RawRabbit;
 using RawRabbit.Configuration;
 using Newtonsoft.Json;
+using RawRabbit.DependencyInjection.Autofac;
+using RawRabbit.Instantiation;
+using RawRabbit.Serialization;
 using RawRabbit.vNext;
 
 namespace BorrowIt.Common.Rabbit.IoC
@@ -28,7 +32,11 @@ namespace BorrowIt.Common.Rabbit.IoC
                 config.Hostnames.Remove("localhost");
             }
 
-            var client = BusClientFactory.CreateDefault(config);
+            var client = RawRabbitFactory.CreateSingleton(new RawRabbitOptions
+            {
+                ClientConfiguration = config,
+                DependencyInjection = ioc => ioc.AddSingleton<ISerializer, RabbitSerializer>()
+            });
             builder.Register(ctx => client).As<IBusClient>().SingleInstance();
             builder.RegisterType<BusPublisher>().As<IBusPublisher>();
         }

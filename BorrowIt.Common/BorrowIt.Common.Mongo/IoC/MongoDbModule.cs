@@ -21,16 +21,13 @@ namespace BorrowIt.Common.Mongo.IoC
         }
         protected override void Load(ContainerBuilder builder)
         {
-
             var options = new MongoDbSettings()
             {
                 ConnectionString = _configuration[$"{_configurationKey}:ConnectionString"],
                 DatabaseName = _configuration[$"{_configurationKey}:DatabaseName"]
             };
-            
-            builder.Register(x => new MongoClient(options.ConnectionString)).As<IMongoClient>().SingleInstance();
-            builder.Register(x => x.Resolve<IMongoClient>().GetDatabase(options.DatabaseName))
-                .As<IMongoDatabase>();
+            builder.Register(x => options).SingleInstance();
+            builder.Register(x => new MongoClient(options.ConnectionString)).As<IMongoClient>();
             builder.RegisterGeneric(typeof(GenericMongoRepository<,>)).As(typeof(IGenericRepository<,>));
             
         }

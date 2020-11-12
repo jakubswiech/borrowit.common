@@ -1,13 +1,13 @@
 using System;
 using BorrowIt.Common.Mongo.Attributes;
 using BorrowIt.Common.Mongo.Models;
+using MongoDB.Bson;
 
 namespace BorrowIt.Api.Entities
 {
     [MongoEntity("Tests")]
-    public class TestEntity : IMongoEntity
+    public class TestEntity : MongoEntity
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
     }
 }

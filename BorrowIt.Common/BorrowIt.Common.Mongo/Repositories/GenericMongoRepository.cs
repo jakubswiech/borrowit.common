@@ -8,17 +8,18 @@ using BorrowIt.Common.Domain;
 using BorrowIt.Common.Domain.Repositories;
 using BorrowIt.Common.Mongo.Attributes;
 using BorrowIt.Common.Mongo.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace BorrowIt.Common.Mongo.Repositories
 {
     public class GenericMongoRepository<TDomainModel, TEntity> : IGenericRepository<TDomainModel, TEntity> 
-        where TDomainModel : DomainModel where TEntity : IMongoEntity
+        where TDomainModel : DomainModel where TEntity : MongoEntity
     {
         private readonly IMapper _mapper;
         private readonly IMongoCollection<TEntity> _collection;
 
-        public GenericMongoRepository(IMongoDatabase database, IMapper mapper)
+        public GenericMongoRepository(IMongoClient mongoClient, IMapper mapper, MongoDbSettings mongoDbSettings)
         {
             _mapper = mapper;
             var mongoEntityAttribute = typeof(TEntity).GetCustomAttributes(typeof(MongoEntityAttribute), false)
@@ -28,7 +29,8 @@ namespace BorrowIt.Common.Mongo.Repositories
             {
                 throw new ArgumentNullException(nameof(mongoEntityAttribute));
             }
-            
+
+            var database = mongoClient.GetDatabase(mongoDbSettings.DatabaseName);
             _collection = database.GetCollection<TEntity>(mongoEntityAttribute.TableName);
         }
         

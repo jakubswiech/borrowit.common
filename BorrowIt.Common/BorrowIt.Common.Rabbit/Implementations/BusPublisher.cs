@@ -18,12 +18,11 @@ namespace BorrowIt.Common.Rabbit.Implementations
         
         public async Task PublishAsync<TMessage>(TMessage message) where TMessage : IMessage
         {
-            await _busClient.PublishAsync(message, Guid.NewGuid(),
-                cfg =>
-                {
-                    cfg.WithRoutingKey(PathHelper.GetPath<TMessage>());
-                    cfg.WithExchange(x => x.WithName(PathHelper.GetPath<TMessage>()));
-                });
+            await _busClient.PublishAsync(message, ctx => ctx.UsePublishConfiguration(cfg =>
+            {
+                cfg.OnDeclaredExchange(x => x.WithName(PathHelper.GetPath<TMessage>()));
+                cfg.WithRoutingKey(PathHelper.GetPath<TMessage>());
+            }));
         }
     }
 }

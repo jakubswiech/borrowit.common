@@ -24,14 +24,18 @@ namespace BorrowIt.Common.Rabbit.Implementations
         public IBusSubscriber SubscribeMessage<TMessage>() where TMessage : IMessage
         {
             var messageHandler = _serviceProvider.GetService<IMessageHandler<TMessage>>();
-            _busClient.SubscribeAsync<TMessage>(async (msg, ctx) =>
-            {
-                await messageHandler.HandleMessageAsync(msg, CancellationToken.None);
-            }, ctx =>
-            {
-                ctx.WithRoutingKey(PathHelper.GetPath<TMessage>());
-                ctx.WithExchange(x => { x.WithName(PathHelper.GetPath<TMessage>()); });
-            });
+            _busClient.SubscribeAsync<TMessage>(async (msg) =>
+                {
+                    await messageHandler.HandleMessageAsync(msg, CancellationToken.None);
+                }, ctx =>
+                {
+                    ctx.UseSubscribeConfiguration(cfg =>
+                    {
+                        cfg.Consume(x => x.WithRoutingKey(PathHelper.GetPath<TMessage>()));
+                        cfg.OnDeclaredExchange(x => x.WithName(PathHelper.GetPath<TMessage>()));
+                        cfg.FromDeclaredQueue(x => x.WithName(PathHelper.GetPath<TMessage>()));
+                    });
+                });
 
             return this;
         }

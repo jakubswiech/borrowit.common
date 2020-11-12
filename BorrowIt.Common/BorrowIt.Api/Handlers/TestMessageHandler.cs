@@ -8,6 +8,10 @@ namespace BorrowIt.Api.Handlers
 {
     public class TestMessageHandler : IMessageHandler<TestMessage>
     {
+        public TestMessageHandler()
+        {
+            
+        }
         public async Task HandleMessageAsync(TestMessage message, CancellationToken token)
         {
             Console.WriteLine(message.Name);
