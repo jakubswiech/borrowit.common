@@ -26,7 +26,7 @@ namespace BorrowIt.Common.Rabbit.IoC
 
         protected override void Load(ContainerBuilder builder)
         {
-            var config = JsonConvert.DeserializeObject<RawRabbitConfiguration>(File.ReadAllText(@"./rawrabbit.json"));
+            var config = JsonConvert.DeserializeObject<BorrowItRawRabbitConfiguration>(File.ReadAllText(@"./rawrabbit.json"));
             if (config.Hostnames.Any(x => !x.Equals("localhost")))
             {
                 config.Hostnames.Remove("localhost");
@@ -39,6 +39,7 @@ namespace BorrowIt.Common.Rabbit.IoC
             });
             builder.Register(ctx => client).As<IBusClient>().SingleInstance();
             builder.RegisterType<BusPublisher>().As<IBusPublisher>();
+            builder.Register(ctx => config).As<BorrowItRawRabbitConfiguration>().SingleInstance();
         }
     }
 }

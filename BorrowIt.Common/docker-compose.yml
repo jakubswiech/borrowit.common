@@ -36,7 +36,7 @@ services:
     image: auth
     hostname: auth
     ports:
-        - "8080:80"
+        - "8081:80"
     networks:
         testing_net:
             ipv4_address: 172.20.0.5
@@ -45,10 +45,19 @@ services:
     image: todo
     hostname: todo
     ports:
-        - "8081:80"
+        - "8082:80"
     networks:
         testing_net:
-            ipv4_address: 172.20.0.6          
+            ipv4_address: 172.20.0.6
+            
+  gatewayapi:
+    image: gatewayapi
+    hostname: gatewayapi
+    ports:
+        - "8080:80"
+    networks:
+        testing_net:
+            ipv4_address: 172.20.0.7                    
   
 networks:
   testing_net:

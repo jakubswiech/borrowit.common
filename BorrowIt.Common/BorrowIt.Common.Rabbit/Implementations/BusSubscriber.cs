@@ -14,11 +14,13 @@ namespace BorrowIt.Common.Rabbit.Implementations
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IBusClient _busClient;
+        private readonly BorrowItRawRabbitConfiguration _rawRabbitConfiguration;
 
         public BusSubscriber(IApplicationBuilder app)
         {
             _serviceProvider = app.ApplicationServices;
             _busClient = _serviceProvider.GetService<IBusClient>();
+            _rawRabbitConfiguration = _serviceProvider.GetService<BorrowItRawRabbitConfiguration>();
         }
 
         public IBusSubscriber SubscribeMessage<TMessage>() where TMessage : IMessage
@@ -33,7 +35,7 @@ namespace BorrowIt.Common.Rabbit.Implementations
                     {
                         cfg.Consume(x => x.WithRoutingKey(PathHelper.GetPath<TMessage>()));
                         cfg.OnDeclaredExchange(x => x.WithName(PathHelper.GetPath<TMessage>()));
-                        cfg.FromDeclaredQueue(x => x.WithName(PathHelper.GetPath<TMessage>()));
+                        cfg.FromDeclaredQueue(x => x.WithName(PathHelper.GetPath<TMessage>()).WithNameSuffix(_rawRabbitConfiguration.QueueNameSuffix));
                     });
                 });
 
