@@ -24,6 +24,7 @@ services:
         - "5672:5672"
     labels:
         NAME: "rabbitmq"
+    restart: always
     environment: 
         RABBITMQ_DEFAULT_USER: "rabbitMq"
         RABBITMQ_DEFAULT_PASS: "rabbitMq"
@@ -37,6 +38,7 @@ services:
     hostname: auth
     ports:
         - "8081:80"
+    restart: always
     networks:
         testing_net:
             ipv4_address: 172.20.0.5
@@ -46,6 +48,7 @@ services:
     hostname: todo
     ports:
         - "8082:80"
+    restart: always
     networks:
         testing_net:
             ipv4_address: 172.20.0.6
@@ -55,9 +58,30 @@ services:
     hostname: gatewayapi
     ports:
         - "8080:80"
+    restart: always
     networks:
         testing_net:
-            ipv4_address: 172.20.0.7                    
+            ipv4_address: 172.20.0.7
+            
+  notifications:
+    image: notifications
+    hostname: notifications
+    ports:
+        - "8079:80"
+    restart: always
+    networks:
+        testing_net:
+            ipv4_address: 172.20.0.8 
+            
+  ui:
+    image: ui
+    hostname: ui
+    ports:
+        - "80:80"
+    restart: always
+    networks:
+        testing_net:
+            ipv4_address: 172.20.0.9                          
   
 networks:
   testing_net:
